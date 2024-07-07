@@ -7,29 +7,127 @@ const {
   deleteImageOnCloudinary,
 } = require('../utils/cloudinary.js');
 const { UserRolesEnum } = require('../constants.js');
+const { default: mongoose } = require('mongoose');
 
 const getAllBlogs = asyncHandler(async (req, res) => {
-  const blogs = await Blog.find({});
+  const { page = 1, limit = 6, sortType = 'latest' } = req.query;
+  const userId = req.user?._id;
+
+  // Stage 1: Aggregate blogs with totalLikes and isUserLiked
+  let pipeline = [
+    {
+      $lookup: {
+        from: 'likes',
+        let: { blogId: '$_id' },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$blogId', '$$blogId'] } } },
+          { $project: { likedBy: 1 } },
+        ],
+        as: 'likes',
+      },
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' },
+        isUserLiked: {
+          $in: [new mongoose.Types.ObjectId(userId), '$likes.likedBy'],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        heading: 1,
+        subHeading: 1,
+        totalLikes: 1,
+        blogImage: 1,
+        blogCategory: 1,
+        content: 1,
+        author: 1,
+        isUserLiked: 1,
+        createdAt: 1,
+      },
+    },
+  ];
+
+  // Stage 2: Sorting based on sortType
+  if (sortType === 'latest') {
+    pipeline.push({ $sort: { createdAt: -1 } }); // Sort by latest createdAt first
+  } else if (sortType === 'trending') {
+    pipeline.push({ $sort: { totalLikes: -1 } }); // Sort by most totalLikes first
+  }
+
+  // Stage 3: Paginate the aggregated blogs manually
+  const blogsAggregates = await Blog.aggregate(pipeline);
+  const totalBlogs = blogsAggregates.length;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const blogs = blogsAggregates.slice(startIndex, endIndex);
+
   return res
     .status(200)
-    .json(new ApiResponse(200, blogs, 'Blogs fetched successfully'));
+    .json(
+      new ApiResponse(200, { blogs, totalBlogs }, 'Blogs fetched successfully')
+    );
 });
 
 const getBlogById = asyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.blogId);
-  if (!blog) {
-    throw new ApiError(404, 'Blog not found');
+  const blogId = req.params?.blogId;
+  const userId = req.user?._id;
+  console.log('user id is ', userId);
+
+  const blogs = await Blog.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(blogId),
+      },
+    },
+    {
+      $lookup: {
+        from: 'likes', // Adjust this to your actual likes collection name
+        let: { blogId: '$_id' },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$blogId', '$$blogId'] } } },
+          { $project: { likedBy: 1 } },
+        ],
+        as: 'likes',
+      },
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' },
+        isUserLiked: {
+          $in: [new mongoose.Types.ObjectId(userId), '$likes.likedBy'],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        heading: 1,
+        subHeading: 1,
+        totalLikes: 1,
+        blogImage: 1,
+        blogCategory: 1,
+        content: 1,
+        author: 1,
+        isUserLiked: 1,
+      },
+    },
+  ]);
+
+  if (!blogs) {
+    throw new ApiError(404, 'No blogs found ');
   }
+
   return res
     .status(200)
-    .json(new ApiResponse(200, blog, 'Blog fetched successfully'));
+    .json(new ApiResponse(200, blogs, 'Blog fetched successfully'));
 });
 
 const getMyBlogs = asyncHandler(async (req, res) => {
   const blogs = await Blog.find({ author: req.user?._id });
-  if (!blogs) {
-    throw new ApiError(404, 'No blogs found ');
-  }
   return res
     .status(200)
     .json(new ApiResponse(200, blogs, 'Blogs fetched successfully'));

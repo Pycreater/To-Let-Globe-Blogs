@@ -24,20 +24,12 @@ const {
 } = require('../middlewares/auth.middlewares.js');
 const { UserRolesEnum } = require('../constants.js');
 
-// unsecure routes
-router.route('/').get(getAllBlogs);
-
-router
-  .route('/:blogId')
-  .get(mongoIdPathVariableValidator('blogId'), validate, getBlogById);
-
 // secure routes
 router.use(verifyJWT);
 
-router.route('/self/blogs').get(getMyBlogs);
-
 router
   .route('/')
+  .get(getAllBlogs)
   .post(
     verifyPermission([UserRolesEnum.CONTENT_WRITER, UserRolesEnum.ADMIN]),
     upload.single('blogImage'),
@@ -45,9 +37,12 @@ router
     validate,
     createBlog
   );
+router.route('/self/blogs').get(getMyBlogs);
+router.route('/');
 
 router
   .route('/:blogId')
+  .get(mongoIdPathVariableValidator('blogId'), validate, getBlogById)
   .patch(
     verifyPermission([UserRolesEnum.CONTENT_WRITER, UserRolesEnum.ADMIN]),
     upload.single('blogImage'),
