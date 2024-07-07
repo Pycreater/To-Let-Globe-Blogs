@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const { errorHandler } = require('./middlewares/error.middlewares.js');
 
 const userRouter = require('./routes/auth/user.routes.js');
+const blogRouter = require('./routes/blog.routes.js');
 
 const app = express();
 app.use(
@@ -27,6 +28,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/blogs', blogRouter);
 
 app.use(errorHandler);
 
