@@ -3,6 +3,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const { errorHandler } = require('./middlewares/error.middlewares.js');
+
+const userRouter = require('./routes/auth/user.routes.js');
 
 const app = express();
 app.use(
@@ -22,5 +25,9 @@ app.use(helmet());
 
 // Log requests with Morgan middleware (use 'combined' format for production)
 app.use(morgan('dev'));
+
+app.use('/api/v1/users', userRouter);
+
+app.use(errorHandler);
 
 module.exports = { app };
