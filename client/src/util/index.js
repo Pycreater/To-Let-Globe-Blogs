@@ -11,12 +11,13 @@ export const requestHandler = async (api, setLoading, onSuccess, onError) => {
       onSuccess(data);
     }
   } catch (error) {
-    // Handle error cases, including unauthorized and forbidden cases
-    if ([401, 403].includes(error?.response.data?.statusCode)) {
-      localStorage.clear(); // Clear local storage on authentication issues
-      if (isBrowser) window.location.href = "/login"; // Redirect to login page
+    if (error.response?.status === 422) {
+      const errorObject = error.response.data.errors[0];
+      const [key, value] = Object.entries(errorObject)[0];
+      onError(value);
+      return;
     }
-    onError(error?.response?.data?.message || "Something went wrong");
+    onError(error.response?.data?.message || "Something went wrong");
   } finally {
     // Hide loading state if setLoading function is provided
     setLoading && setLoading(false);
