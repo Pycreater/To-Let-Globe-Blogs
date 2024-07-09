@@ -142,6 +142,7 @@ const getBlogById = asyncHandler(async (req, res) => {
         'author.username': 1,
         'author.email': 1,
         isUserLiked: 1,
+        createdAt: 1,
       },
     },
   ]);
