@@ -9,7 +9,7 @@ export default function NavBar() {
           <img src={logo} alt="Logo" className="w-[100px]" />
         </NavLink>
       </div>
-      <div className="topRight">
+      <div className="topRight md:flex hidden">
         <NavLink
           to="/"
           className={({ isActive }) =>

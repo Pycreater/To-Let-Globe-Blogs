@@ -6,7 +6,7 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import Blogs from "./pages/blogs";
 import AddBlog from "./pages/addBlog";
-import Blog from "./pages/blog";
+import Blog from "./pages/blog.jsx";
 import Layout from "./Layout";
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
           }
         />
         <Route
-          path="blog"
+          path="blogs/:blogId"
           element={
             <PrivateRoute>
               <Blog />
