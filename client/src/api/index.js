@@ -36,5 +36,11 @@ const logoutUser = () => {
   return apiClient.post("/users/logout");
 };
 
+// blogs api
+
+const addBlog = (data) => {
+  return apiClient.post("/blogs", data);
+};
+
 // Export all the API functions
-export { loginUser, logoutUser, registerUser };
+export { loginUser, logoutUser, registerUser, addBlog };

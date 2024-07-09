@@ -17,6 +17,11 @@ export const requestHandler = async (api, setLoading, onSuccess, onError) => {
       onError(value);
       return;
     }
+    if ([401, 403].includes(error?.response.data?.statusCode)) {
+      localStorage.clear(); // Clear local storage on authentication issues
+      if (isBrowser) window.location.href = "/login"; // Redirect to login page
+      return;
+    }
     onError(error.response?.data?.message || "Something went wrong");
   } finally {
     // Hide loading state if setLoading function is provided

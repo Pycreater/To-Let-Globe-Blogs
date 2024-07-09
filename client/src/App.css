@@ -22,3 +22,32 @@ h6 {
 h2 {
   color: #5aa7a0;
 }
+/* 
+.ql-formats {
+  background-color: white;
+  color: white;
+} */
+
+.ql-snow .ql-fill {
+  fill: white !important;
+}
+
+.ql-snow .ql-stroke {
+  fill: none !important;
+  stroke: white !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  stroke-width: 2 !important;
+}
+
+.ql-snow .ql-picker {
+  color: white !important;
+}
+
+.ql-snow .ql-picker-options .ql-picker-item {
+  color: black;
+}
+
+.ql-editor {
+  color: white;
+}

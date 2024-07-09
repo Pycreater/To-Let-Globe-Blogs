@@ -5,6 +5,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Home from "./pages/home";
+import AddBlog from "./pages/addBlog.jsx";
 
 function App() {
   return (
@@ -16,6 +17,15 @@ function App() {
           element={
             <PrivateRoute>
               <Home />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/create-blog"
+          element={
+            <PrivateRoute>
+              <AddBlog />
             </PrivateRoute>
           }
         />
