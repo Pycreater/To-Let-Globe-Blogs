@@ -51,3 +51,50 @@ h2 {
 .ql-editor {
   color: white;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.topLeft {
+  flex: 3;
+}
+
+/* .topCenter {
+  flex: 2;
+} */
+
+.topRight {
+  flex: 6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.navbar-link {
+  padding: 5px 20px;
+  text-decoration: none;
+  color: white;
+  border-radius: 35px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #0d3835;
+  background-color: #3cbcb1;
+  border: 2px solid #0d3835;
+}
+
+.navbar-link.active {
+  color: #0d3835;
+  background-color: #3cbcb1;
+  border: 2px solid #0d3835;
+}

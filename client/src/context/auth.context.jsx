@@ -36,7 +36,7 @@ const AuthProvider = ({ children }) => {
         setToken(data.accessToken);
         LocalStorage.set("user", data);
         LocalStorage.set("token", data.accessToken);
-        navigate("/");
+        navigate("/blogs");
       },
       (message) => {
         toast.error(message);

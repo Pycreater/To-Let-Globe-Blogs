@@ -69,7 +69,7 @@ const AddBlog = () => {
       setIsLoading,
       () => {
         resetForm();
-        navigate("/");
+        navigate("/blogs");
         toast.success("Blog created successfully!");
       },
       (message) => {
