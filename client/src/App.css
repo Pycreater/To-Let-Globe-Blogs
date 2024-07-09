@@ -22,3 +22,78 @@ h6 {
 h2 {
   color: #5aa7a0;
 }
+/* 
+.ql-formats {
+  background-color: white;
+  color: white;
+} */
+
+.ql-snow .ql-fill {
+  fill: white !important;
+}
+
+.ql-snow .ql-stroke {
+  fill: none !important;
+  stroke: white !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  stroke-width: 2 !important;
+}
+
+.ql-snow .ql-picker {
+  color: white !important;
+}
+
+.ql-snow .ql-picker-options .ql-picker-item {
+  color: black;
+}
+
+.ql-editor {
+  color: white;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.top {
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.topLeft {
+  flex: 3;
+}
+
+/* .topCenter {
+  flex: 2;
+} */
+
+.topRight {
+  flex: 6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.navbar-link {
+  padding: 5px 20px;
+  text-decoration: none;
+  color: white;
+  border-radius: 35px;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #0d3835;
+  background-color: #3cbcb1;
+  border: 2px solid #0d3835;
+}
+
+.navbar-link.active {
+  color: #0d3835;
+  background-color: #3cbcb1;
+  border: 2px solid #0d3835;
+}

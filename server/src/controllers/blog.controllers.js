@@ -35,6 +35,21 @@ const getAllBlogs = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: 'users', // Adjust to your actual users collection name
+        localField: 'author', // Assuming 'author' field holds the ObjectId of the user
+        foreignField: '_id',
+        as: 'authorDetails',
+      },
+    },
+    {
+      $addFields: {
+        author: {
+          $arrayElemAt: ['$authorDetails', 0],
+        },
+      },
+    },
+    {
       $project: {
         _id: 1,
         heading: 1,
@@ -43,7 +58,10 @@ const getAllBlogs = asyncHandler(async (req, res) => {
         blogImage: 1,
         blogCategory: 1,
         content: 1,
-        author: 1,
+        author: {
+          username: '$author.username',
+          email: '$author.email',
+        },
         isUserLiked: 1,
         createdAt: 1,
       },
@@ -75,7 +93,6 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 const getBlogById = asyncHandler(async (req, res) => {
   const blogId = req.params?.blogId;
   const userId = req.user?._id;
-  console.log('user id is ', userId);
 
   const blogs = await Blog.aggregate([
     {
@@ -95,10 +112,21 @@ const getBlogById = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: 'users', // Adjust this to your actual users collection name
+        localField: 'author', // Assuming 'author' field holds the ObjectId of the user
+        foreignField: '_id',
+        as: 'authorDetails',
+      },
+    },
+    {
       $addFields: {
         totalLikes: { $size: '$likes' },
         isUserLiked: {
           $in: [new mongoose.Types.ObjectId(userId), '$likes.likedBy'],
+        },
+        author: {
+          $arrayElemAt: ['$authorDetails', 0],
         },
       },
     },
@@ -111,19 +139,29 @@ const getBlogById = asyncHandler(async (req, res) => {
         blogImage: 1,
         blogCategory: 1,
         content: 1,
-        author: 1,
+        'author.username': 1,
+        'author.email': 1,
         isUserLiked: 1,
+        createdAt: 1,
       },
     },
   ]);
 
-  if (!blogs) {
-    throw new ApiError(404, 'No blogs found ');
+  if (!blogs || blogs.length === 0) {
+    throw new ApiError(404, 'No blogs found');
   }
+
+  const formattedBlog = {
+    ...blogs[0],
+    author: {
+      username: blogs[0].author.username,
+      email: blogs[0].author.email,
+    },
+  };
 
   return res
     .status(200)
-    .json(new ApiResponse(200, blogs, 'Blog fetched successfully'));
+    .json(new ApiResponse(200, formattedBlog, 'Blog fetched successfully'));
 });
 
 const getMyBlogs = asyncHandler(async (req, res) => {
