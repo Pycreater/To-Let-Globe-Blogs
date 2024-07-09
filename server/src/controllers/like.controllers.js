@@ -2,6 +2,7 @@ const Like = require('../models/like.models.js');
 const { ApiError } = require('../utils/ApiError.js');
 const { ApiResponse } = require('../utils/ApiResponse.js');
 const { asyncHandler } = require('../utils/asyncHandler.js');
+const mongoose = require('mongoose');
 
 const toggleLike = asyncHandler(async (req, res) => {
   const { blogId } = req.params;
@@ -89,11 +90,27 @@ const getMyLikedBlogs = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: 'likes', // Assuming the likes collection name
+        localField: '_id',
+        foreignField: 'blogId',
+        as: 'likes',
+      },
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' }, // Calculate totalLikes
+        isUserLiked: {
+          $in: [new mongoose.Types.ObjectId(req.user._id), '$likes.likedBy'],
+        }, // Check if the user liked this blog
+      },
+    },
+    {
       $project: {
         _id: 1,
         heading: 1,
         subHeading: 1,
-        totalLikes: 1, // You may want to calculate totalLikes differently for liked blogs
+        totalLikes: 1,
         blogImage: 1,
         blogCategory: 1,
         content: 1,
@@ -101,7 +118,7 @@ const getMyLikedBlogs = asyncHandler(async (req, res) => {
           username: '$author.username',
           email: '$author.email',
         },
-        isUserLiked: true, // Assuming all blogs in this response are liked by the user
+        isUserLiked: 1,
         createdAt: 1,
       },
     },
