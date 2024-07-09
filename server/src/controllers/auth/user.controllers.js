@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { ApiError } = require('../../utils/ApiError.js');
 const { ApiResponse } = require('../../utils/ApiResponse.js');
 const { asyncHandler } = require('../../utils/asyncHandler.js');
+const { UserRolesEnum } = require('../../constants.js');
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -36,7 +37,7 @@ const userRegister = asyncHandler(async (req, res) => {
     email,
     password,
     username,
-    role: role || UserRolesEnum.USER,
+    role: role || UserRolesEnum.CONTENT_WRITER,
   });
 
   if (!user) {

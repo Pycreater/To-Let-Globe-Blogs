@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: AvailableUserRoles,
-    default: UserRolesEnum.USER,
+    default: UserRolesEnum.CONTENT_WRITER,
     required: true,
   },
   password: {

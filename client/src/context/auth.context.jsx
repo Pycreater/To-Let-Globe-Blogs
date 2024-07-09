@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, logoutUser, registerUser } from "../api";
 import Loader from "../components/Loader";
-import { LocalStorage, requestHandler } from "../util";
+import { LocalStorage, requestHandler } from "../util/index.js";
 import { toast } from "sonner";
 
 // Create a context to manage authentication-related data and functions
@@ -81,8 +81,8 @@ const AuthProvider = ({ children }) => {
     setIsLoading(true);
     const _token = LocalStorage.get("token");
     const _user = LocalStorage.get("user");
-    if (_token && _user?.id) {
-      setUser(_user);
+    if (_token && _user?.user?._id) {
+      setUser(_user?.user);
       setToken(_token);
     }
     setIsLoading(false);
