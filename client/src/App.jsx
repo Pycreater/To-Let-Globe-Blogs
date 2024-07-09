@@ -6,6 +6,7 @@ import Login from "./pages/login";
 import Register from "./pages/register";
 import Home from "./pages/home";
 import AddBlog from "./pages/addBlog.jsx";
+import Blog from "./pages/blog.jsx";
 
 function App() {
   return (
@@ -26,6 +27,15 @@ function App() {
           element={
             <PrivateRoute>
               <AddBlog />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/blog"
+          element={
+            <PrivateRoute>
+              <Blog />
             </PrivateRoute>
           }
         />
