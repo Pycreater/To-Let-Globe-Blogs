@@ -51,7 +51,7 @@ const register = () => {
           className="w-full p-2 mb-4 bg-gray-800  py-3 px-4 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#3baea0bb]"
         />
         <button className="w-full py-2 bg-[#2e8f83] text-white rounded hover:bg-[#34a394]">
-          Login
+          Sign up
         </button>
         <div className="text-sm mt-4 text-center text-white">
           <p>
