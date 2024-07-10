@@ -60,6 +60,7 @@ const BlogCard = ({ data }) => {
       </div>
       <div className="my-2">
         <div
+          className="!text-white"
           dangerouslySetInnerHTML={{ __html: getFirst40Words(data.content) }}
         />
       </div>
