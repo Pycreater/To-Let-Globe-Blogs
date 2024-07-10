@@ -44,9 +44,13 @@ const BlogCard = ({ data }) => {
   }, []);
 
   return (
-    <div className="w-full border-b-2 hover:border-[#3cbcb1] rounded-xl py-5 duration-150 ease-in-out">
-      <div className="w-full my-4 overflow-hidden max-h-[250px] h-full">
-        <img src={data.blogImage.url} alt="" className="rounded-md" />
+    <div className="w-full  h-full   rounded-xl  duration-150 ease-in-out">
+      <div className="w-full  overflow-hidden max-h-[250px] h-full">
+        <img
+          src={data.blogImage.url}
+          alt=""
+          className="w-full h-full rounded-md"
+        />
       </div>
       <p className="text-sm text-gray-400 mb-2">
         {formatMongoDate(data.createdAt)} | {data.blogCategory}
@@ -55,11 +59,9 @@ const BlogCard = ({ data }) => {
         <h1 className="text-base ">{getFirst40Words(data.heading)}</h1>
       </div>
       <div className="my-2">
-        <p className="text-base text-white">
-          <div
-            dangerouslySetInnerHTML={{ __html: getFirst40Words(data.content) }}
-          />
-        </p>
+        <div
+          dangerouslySetInnerHTML={{ __html: getFirst40Words(data.content) }}
+        />
       </div>
       <div className="my-4">
         <Link
@@ -70,7 +72,7 @@ const BlogCard = ({ data }) => {
           Read more <FaLongArrowAltRight />
         </Link>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex md:flex-row flex-col md:items-center items-start justify-between">
         <div className="flex items-center gap-4 justify-start">
           <div className="w-[35px] rounded-full overflow-hidden">
             <img

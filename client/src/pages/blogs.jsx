@@ -36,6 +36,7 @@ const Blogs = () => {
             centered
             TabIndicatorProps={{ style: { background: "#3cbcb1" } }} // Hide the indicator line
             classes={{ root: "custom-tabs-root" }} // Custom class for Tabs root
+            className="md:mb-20 mb-14"
           >
             <Tab
               label="Trending"

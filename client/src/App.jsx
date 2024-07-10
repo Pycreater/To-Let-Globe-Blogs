@@ -8,6 +8,7 @@ import Blogs from "./pages/blogs";
 import AddBlog from "./pages/addBlog";
 import Blog from "./pages/blog.jsx";
 import Layout from "./Layout";
+import MyBlogs from "./pages/myBlogs.jsx";
 
 function App() {
   return (
@@ -51,6 +52,15 @@ function App() {
           element={
             <PrivateRoute>
               <Blog />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="my-blogs"
+          element={
+            <PrivateRoute>
+              <MyBlogs />
             </PrivateRoute>
           }
         />

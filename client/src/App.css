@@ -11,6 +11,10 @@ body {
   background-color: black;
 }
 
+*::selection {
+  background-color: white;
+  color: #154d48;
+}
 h1,
 h3,
 h4,
@@ -52,10 +56,6 @@ h2 {
   color: white;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 .top {
   top: 0;
   display: flex;
@@ -82,18 +82,15 @@ h2 {
   padding: 5px 20px;
   text-decoration: none;
   color: white;
-  border-radius: 35px;
   transition: background-color 0.3s ease;
 }
 
 .navbar-link:hover {
-  color: #0d3835;
-  background-color: #3cbcb1;
-  border: 2px solid #0d3835;
+  color: #3cbcb1;
+  border-bottom: 2px solid #3cbcb1;
 }
 
 .navbar-link.active {
-  color: #0d3835;
-  background-color: #3cbcb1;
-  border: 2px solid #0d3835;
+  color: #3cbcb1;
+  border-bottom: 2px solid #3cbcb1;
 }

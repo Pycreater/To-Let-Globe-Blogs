@@ -33,7 +33,7 @@ const registerUser = (data) => {
 };
 
 const logoutUser = () => {
-  return apiClient.post("/users/logout");
+  return apiClient.get("/users/logout");
 };
 
 // blogs api
@@ -52,8 +52,16 @@ const getBlogById = (blogId) => {
   return apiClient.get(`/blogs/${blogId}`);
 };
 
-const getFavoritesBlog = () => {
-  return apiClient.get("/likes/self");
+const deleteBlog = (blogId) => {
+  return apiClient.delete(`/blogs/${blogId}`);
+};
+
+const getFavoritesBlog = (page = 1, limit = 6) => {
+  return apiClient.get(`/likes/self/?page=${page}&limit=${limit}`);
+};
+
+const getMyBlogs = (page = 1, limit = 6) => {
+  return apiClient.get(`/blogs/self/blogs/?page=${page}&limit=${limit}`);
 };
 
 const toggleBlogLike = (blogId) => {
@@ -70,4 +78,6 @@ export {
   getBlogById,
   getFavoritesBlog,
   toggleBlogLike,
+  getMyBlogs,
+  deleteBlog,
 };

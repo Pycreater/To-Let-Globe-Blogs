@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FaHeart, FaRegHeart, FaLongArrowAltLeft } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
-import { getBlogById, toggleBlogLike } from "../api";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { deleteBlog, getBlogById, toggleBlogLike } from "../api";
 import { toast } from "sonner";
 import { requestHandler } from "../util";
+import { useAuth } from "../context/auth.context";
 import Loader from "../components/Loader";
 
 const Blog = () => {
@@ -12,6 +13,10 @@ const Blog = () => {
   const [isUserLiked, setIsUserLiked] = useState(false); // Initially assuming the user hasn't liked the blog
   const [totalLikes, setTotalLikes] = useState(0); // Initial total likes count
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const { user } = useAuth();
 
   // Function to format the date
   const formatMongoDate = (createdAt) => {
@@ -46,7 +51,7 @@ const Blog = () => {
         console.error(message);
       }
     );
-  }, []);
+  }, [blog._id]);
 
   useEffect(() => {
     (async () => {
@@ -65,6 +70,21 @@ const Blog = () => {
       );
     })();
   }, [blogId]);
+
+  const deleteHandler = async () => {
+    await requestHandler(
+      async () => await deleteBlog(blogId),
+      setIsLoading,
+      (data) => {
+        toast.success(data.message);
+        navigate("/blogs");
+      },
+      (message) => {
+        // Handle error message display (toast.error(message))
+        console.error(message);
+      }
+    );
+  };
 
   return isLoading ? (
     <Loader />
@@ -123,7 +143,7 @@ const Blog = () => {
               __html: addParagraphSpacing(blog.subHeading, 100),
             }}
           ></p>
-          <div className="my-6">
+          <div className="my-6 flex  items-center justify-between gap-4">
             <Link
               to="/blogs"
               className="text-sm text-[#3cbcb1] hover:underline flex gap-2 items-center "
@@ -131,6 +151,15 @@ const Blog = () => {
             >
               <FaLongArrowAltLeft /> Back to blogs
             </Link>
+
+            {user && user._id && user._id === blog.author?._id && (
+              <button
+                className=" py-2 px-5 bg-[#2e8f83] text-base text-white rounded hover:bg-[#34a394]"
+                onClick={deleteHandler}
+              >
+                Delete Blog
+              </button>
+            )}
           </div>
         </div>
       </div>

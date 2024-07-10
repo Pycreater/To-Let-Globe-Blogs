@@ -1,7 +1,23 @@
+import { useEffect, useState } from "react";
 import logo from "../assets/tolet.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { LocalStorage } from "../util/index.js";
+import { useAuth } from "../context/auth.context.jsx";
 
 export default function NavBar() {
+  const [isLoggedIn, SetIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const { logout, token, user } = useAuth();
+
+  const authHandler = () => {
+    if (!isLoggedIn) navigate("/login");
+    else logout();
+  };
+
+  useEffect(() => {
+    SetIsLoggedIn(token && user ? true : false);
+  }, [isLoggedIn, SetIsLoggedIn, authHandler]);
+
   return (
     <div className="top py-3 px-5">
       <div className="topLeft">
@@ -35,22 +51,6 @@ export default function NavBar() {
           My Blogs
         </NavLink>
         <NavLink
-          to="/service"
-          className={({ isActive }) =>
-            isActive ? "navbar-link active" : "navbar-link"
-          }
-        >
-          Service
-        </NavLink>
-        <NavLink
-          to="/contact"
-          className={({ isActive }) =>
-            isActive ? "navbar-link active" : "navbar-link"
-          }
-        >
-          Contact
-        </NavLink>
-        <NavLink
           to="/about"
           className={({ isActive }) =>
             isActive ? "navbar-link active" : "navbar-link"
@@ -58,6 +58,12 @@ export default function NavBar() {
         >
           About
         </NavLink>
+        <button
+          className=" py-2 px-5 bg-[#2e8f83] text-base text-white rounded hover:bg-[#34a394]"
+          onClick={authHandler}
+        >
+          {isLoggedIn ? "Logout" : "Login"}
+        </button>
       </div>
     </div>
   );
