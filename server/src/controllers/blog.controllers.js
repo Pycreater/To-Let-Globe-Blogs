@@ -8,10 +8,28 @@ const {
 } = require('../utils/cloudinary.js');
 const { UserRolesEnum } = require('../constants.js');
 const { default: mongoose } = require('mongoose');
+const { redis } = require('../config/redis.config.js');
 
 const getAllBlogs = asyncHandler(async (req, res) => {
   const { page = 1, limit = 6, sortType = 'latest' } = req.query;
   const userId = req.user?._id;
+
+  // Check if the request is cached in Redis
+  const cacheKey = `blogs:page${page}:limit${limit}:sort${sortType}`;
+  const cachedBlogs = await redis.get(cacheKey);
+
+  if (cachedBlogs) {
+    const parsedBlogs = JSON.parse(cachedBlogs);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          parsedBlogs,
+          'Blogs fetched successfully from cache'
+        )
+      );
+  }
 
   // Stage 1: Aggregate blogs with totalLikes and isUserLiked
   let pipeline = [
@@ -83,6 +101,9 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 
   const blogs = blogsAggregates.slice(startIndex, endIndex);
 
+  // Cache the result in Redis
+  await redis.set(cacheKey, JSON.stringify({ blogs, totalBlogs }), 'EX', 60); // Cache for 60 seconds
+
   return res
     .status(200)
     .json(
@@ -94,6 +115,19 @@ const getBlogById = asyncHandler(async (req, res) => {
   const blogId = req.params?.blogId;
   const userId = req.user?._id;
 
+  // Check if the blog exists in Redis cache
+  const cachedBlog = await redis.get(`blog:${blogId}`);
+
+  if (cachedBlog) {
+    const parsedBlog = JSON.parse(cachedBlog);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, parsedBlog, 'Blog fetched successfully from cache')
+      );
+  }
+
+  // If not cached, query the database
   const blogs = await Blog.aggregate([
     {
       $match: {
@@ -158,6 +192,9 @@ const getBlogById = asyncHandler(async (req, res) => {
       email: blogs[0].author.email,
     },
   };
+
+  // Cache the blog in Redis for future requests
+  await redis.set(`blog:${blogId}`, JSON.stringify(formattedBlog), 'EX', 60); // Cache for 60 seconds
 
   return res
     .status(200)
