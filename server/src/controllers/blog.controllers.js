@@ -61,6 +61,7 @@ const getAllBlogs = asyncHandler(async (req, res) => {
         author: {
           username: '$author.username',
           email: '$author.email',
+          _id: '$author._id',
         },
         isUserLiked: 1,
         createdAt: 1,
@@ -141,6 +142,7 @@ const getBlogById = asyncHandler(async (req, res) => {
         content: 1,
         'author.username': 1,
         'author.email': 1,
+        'author._id': 1,
         isUserLiked: 1,
         createdAt: 1,
       },
@@ -156,6 +158,7 @@ const getBlogById = asyncHandler(async (req, res) => {
     author: {
       username: blogs[0].author.username,
       email: blogs[0].author.email,
+      _id: blogs[0].author._id,
     },
   };
 
@@ -165,10 +168,73 @@ const getBlogById = asyncHandler(async (req, res) => {
 });
 
 const getMyBlogs = asyncHandler(async (req, res) => {
-  const blogs = await Blog.find({ author: req.user?._id });
+  const userId = req.user._id;
+
+  // Aggregate blogs with totalLikes and isUserLiked for the logged-in user
+  let pipeline = [
+    {
+      $match: { author: new mongoose.Types.ObjectId(userId) },
+    },
+    {
+      $lookup: {
+        from: 'likes',
+        let: { blogId: '$_id' },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$blogId', '$$blogId'] } } },
+          { $project: { likedBy: 1 } },
+        ],
+        as: 'likes',
+      },
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' },
+        isUserLiked: {
+          $in: [new mongoose.Types.ObjectId(userId), '$likes.likedBy'],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'users', // Adjust to your actual users collection name
+        localField: 'author', // Assuming 'author' field holds the ObjectId of the user
+        foreignField: '_id',
+        as: 'authorDetails',
+      },
+    },
+    {
+      $addFields: {
+        author: {
+          $arrayElemAt: ['$authorDetails', 0],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        heading: 1,
+        subHeading: 1,
+        totalLikes: 1,
+        blogImage: 1,
+        blogCategory: 1,
+        content: 1,
+        author: {
+          username: '$author.username',
+          email: '$author.email',
+          _id: '$author._id',
+        },
+        isUserLiked: 1,
+        createdAt: 1,
+      },
+    },
+  ];
+
+  // Execute the aggregation pipeline
+  const blogs = await Blog.aggregate(pipeline);
+
   return res
     .status(200)
-    .json(new ApiResponse(200, blogs, 'Blogs fetched successfully'));
+    .json(new ApiResponse(200, { blogs }, 'Blogs fetched successfully'));
 });
 
 const createBlog = asyncHandler(async (req, res) => {

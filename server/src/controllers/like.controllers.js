@@ -117,6 +117,7 @@ const getMyLikedBlogs = asyncHandler(async (req, res) => {
         author: {
           username: '$author.username',
           email: '$author.email',
+          _id: '$author._id',
         },
         isUserLiked: 1,
         createdAt: 1,
