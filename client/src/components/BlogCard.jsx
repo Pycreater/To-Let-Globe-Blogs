@@ -22,11 +22,11 @@ const BlogCard = ({ data }) => {
 
   function getFirst40Words(para) {
     const words = para.trim().split(/\s+/);
-    if (words.length <= 25) {
+    if (words.length <= 10) {
       return para;
     }
 
-    return words.slice(0, 25).join(" ");
+    return words.slice(0, 10).join(" ") + "...";
   }
 
   const toggleLikeHandler = useCallback(async () => {
@@ -45,14 +45,21 @@ const BlogCard = ({ data }) => {
 
   return (
     <div className="w-full border-b-2 hover:border-[#3cbcb1] rounded-xl py-5 duration-150 ease-in-out">
-      <div className="w-full my-4">
+      <div className="w-full my-4 overflow-hidden max-h-[250px] h-full">
         <img src={data.blogImage.url} alt="" className="rounded-md" />
       </div>
       <p className="text-sm text-gray-400 mb-2">
         {formatMongoDate(data.createdAt)} | {data.blogCategory}
       </p>
       <div className="my-2">
-        <p className="text-base text-white">{getFirst40Words(data.content)}</p>
+        <h1 className="text-base ">{getFirst40Words(data.heading)}</h1>
+      </div>
+      <div className="my-2">
+        <p className="text-base text-white">
+          <div
+            dangerouslySetInnerHTML={{ __html: getFirst40Words(data.content) }}
+          />
+        </p>
       </div>
       <div className="my-4">
         <Link
