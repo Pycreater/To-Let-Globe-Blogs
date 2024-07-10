@@ -131,7 +131,10 @@ const Blog = () => {
         </div>
         <hr className="h-[1px] bg-slate-400" />
         <div className="my-6">
-          <p className="text-base text-white">{blog.content}</p>
+          <div
+            className="text-white"
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+          />
         </div>
         <div className="w-full my-4">
           <img src={blog.blogImage?.url} alt="" className="rounded-md" />
