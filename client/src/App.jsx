@@ -1,58 +1,99 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import PublicRoute from "./components/PublicRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import Login from "./pages/login";
 import Register from "./pages/register";
-import Home from "./pages/home";
-import AddBlog from "./pages/addBlog.jsx";
+import Blogs from "./pages/blogs";
+import AddBlog from "./pages/addBlog";
+import Blog from "./pages/blog.jsx";
+import Layout from "./Layout";
+import MyBlogs from "./pages/myBlogs.jsx";
 
 function App() {
   return (
-    <>
-      <Routes>
-        {/* Private chat route: Can only be accessed by authenticated users */}
+    <Routes>
+      {/* Wrap all routes with Layout */}
+      <Route path="/" element={<Layout />}>
+        {/* Private routes */}
         <Route
+          index={true}
           path="/"
           element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
+            <div className="w-full h-screen flex items-center justify-center">
+              <Link
+                className="text-[#3cbcb1] text-lg hover:underline"
+                to="/blogs"
+              >
+                Go to Blogs Section | Not Design yet
+              </Link>
+            </div>
           }
         />
 
         <Route
-          path="/create-blog"
+          path="blogs"
+          element={
+            <PrivateRoute>
+              <Blogs />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="create-blog"
           element={
             <PrivateRoute>
               <AddBlog />
             </PrivateRoute>
           }
         />
-
-        {/* Public login route: Accessible by everyone */}
         <Route
-          path="/login"
+          path="blogs/:blogId"
+          element={
+            <PrivateRoute>
+              <Blog />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="my-blogs"
+          element={
+            <PrivateRoute>
+              <MyBlogs />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Public routes */}
+        <Route
+          path="login"
           element={
             <PublicRoute>
               <Login />
             </PublicRoute>
           }
         />
-
-        {/* Public register route: Accessible by everyone */}
         <Route
-          path="/register"
+          path="register"
           element={
             <PublicRoute>
               <Register />
             </PublicRoute>
           }
         />
+
         {/* 404 page */}
-        <Route path="*" element={<h1>404 Page not found</h1>} />
-      </Routes>
-    </>
+        <Route
+          path="*"
+          element={
+            <div className="w-full h-screen flex items-center justify-center">
+              <h1 className="text-lg">404 Page not found | Not Design yet</h1>
+            </div>
+          }
+        />
+      </Route>
+    </Routes>
   );
 }
 

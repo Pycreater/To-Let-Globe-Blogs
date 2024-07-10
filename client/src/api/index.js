@@ -33,7 +33,7 @@ const registerUser = (data) => {
 };
 
 const logoutUser = () => {
-  return apiClient.post("/users/logout");
+  return apiClient.get("/users/logout");
 };
 
 // blogs api
@@ -42,5 +42,42 @@ const addBlog = (data) => {
   return apiClient.post("/blogs", data);
 };
 
+const getAllBlogs = (sortType = "trending", page = 1, limit = 6) => {
+  return apiClient.get(
+    `/blogs/?page=${page}&limit=${limit}&sortType=${sortType}`
+  );
+};
+
+const getBlogById = (blogId) => {
+  return apiClient.get(`/blogs/${blogId}`);
+};
+
+const deleteBlog = (blogId) => {
+  return apiClient.delete(`/blogs/${blogId}`);
+};
+
+const getFavoritesBlog = (page = 1, limit = 6) => {
+  return apiClient.get(`/likes/self/?page=${page}&limit=${limit}`);
+};
+
+const getMyBlogs = (page = 1, limit = 6) => {
+  return apiClient.get(`/blogs/self/blogs/?page=${page}&limit=${limit}`);
+};
+
+const toggleBlogLike = (blogId) => {
+  return apiClient.post(`/likes/${blogId}`);
+};
+
 // Export all the API functions
-export { loginUser, logoutUser, registerUser, addBlog };
+export {
+  loginUser,
+  logoutUser,
+  registerUser,
+  addBlog,
+  getAllBlogs,
+  getBlogById,
+  getFavoritesBlog,
+  toggleBlogLike,
+  getMyBlogs,
+  deleteBlog,
+};
