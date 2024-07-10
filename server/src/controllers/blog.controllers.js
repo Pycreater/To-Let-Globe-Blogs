@@ -168,9 +168,10 @@ const getBlogById = asyncHandler(async (req, res) => {
 });
 
 const getMyBlogs = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 6 } = req.query;
   const userId = req.user._id;
 
-  // Aggregate blogs with totalLikes and isUserLiked for the logged-in user
+  // Stage 1: Aggregate blogs with totalLikes and isUserLiked
   let pipeline = [
     {
       $match: { author: new mongoose.Types.ObjectId(userId) },
@@ -196,8 +197,8 @@ const getMyBlogs = asyncHandler(async (req, res) => {
     },
     {
       $lookup: {
-        from: 'users', // Adjust to your actual users collection name
-        localField: 'author', // Assuming 'author' field holds the ObjectId of the user
+        from: 'users',
+        localField: 'author',
         foreignField: '_id',
         as: 'authorDetails',
       },
@@ -229,12 +230,19 @@ const getMyBlogs = asyncHandler(async (req, res) => {
     },
   ];
 
-  // Execute the aggregation pipeline
-  const blogs = await Blog.aggregate(pipeline);
+  // Stage 3: Paginate the aggregated blogs manually
+  const blogsAggregates = await Blog.aggregate(pipeline);
+  const totalBlogs = blogsAggregates.length;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const blogs = blogsAggregates.slice(startIndex, endIndex);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { blogs }, 'Blogs fetched successfully'));
+    .json(
+      new ApiResponse(200, { blogs, totalBlogs }, 'Blogs fetched successfully')
+    );
 });
 
 const createBlog = asyncHandler(async (req, res) => {
