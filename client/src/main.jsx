@@ -11,6 +11,16 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <App />
     </AuthProvider>
-    <Toaster className="bg-black" position="top-center" duration={4000} />
+    <Toaster
+      className="bg-black"
+      position="top-center"
+      duration={1500}
+      toastOptions={{
+        classNames: {
+          toast: "bg-white",
+          title: "text-[#133a37] ",
+        },
+      }}
+    />
   </BrowserRouter>
 );
