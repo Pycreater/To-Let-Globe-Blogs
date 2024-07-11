@@ -136,25 +136,34 @@ const AddBlog = () => {
           Content
         </label>
         <div ref={quillRef} className="custom-quill rounded"></div>
-        <button
-          type="submit"
-          className="w-full py-3 bg-[#2e8f83] text-white rounded hover:bg-[#34a394] mt-8 flex justify-center items-center"
-        >
-          {isLoading ? (
-            <TailSpin
-              visible={true}
-              height="30"
-              width="30"
-              color="#fff"
-              ariaLabel="tail-spin-loading"
-              radius="1"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />
-          ) : (
-            "Create Post"
-          )}
-        </button>
+        <div className="flex justify-center md:flex-row flex-col items-center md:gap-5 ">
+          <button
+            type="reset"
+            onClick={resetForm}
+            className="w-full py-3 border-[#2e8f83] border-[1px] text-white rounded hover:bg-[#34a394] mt-8 flex justify-center items-center duration-150 ease-in-out"
+          >
+            Reset Content
+          </button>
+          <button
+            type="submit"
+            className="w-full py-3 bg-[#2e8f83] text-white rounded hover:bg-[#34a394] mt-8 flex justify-center items-center"
+          >
+            {isLoading ? (
+              <TailSpin
+                visible={true}
+                height="30"
+                width="30"
+                color="#fff"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              "Create Post"
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
